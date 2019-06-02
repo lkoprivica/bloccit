@@ -19,15 +19,26 @@ describe("routes : static", () => {
 
   });
 
-  describe("GET /macro", () => {
-
-    it("should return status code 200", (done) => {
-
+  describe("GET /about", () => {
+    it("it should return status code 200 and have About Us in the body of the response"){
       request.get(base, (err, res, body) => {
         expect(res.statusCode).toBe(200);
+        expect(body).toContain("About US");
 
         done();
       });
     });
   });
+
+  //describe("GET /macro", () => {
+
+  //  it("should return status code 200", (done) => {
+
+    //  request.get(base, (err, res, body) => {
+      //  expect(res.statusCode).toBe(200);
+
+      //  done();
+    //  });
+    //});
+  //});
 });
