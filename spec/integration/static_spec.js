@@ -20,8 +20,8 @@ describe("routes : static", () => {
   });
 
   describe("GET /about", () => {
-    it("it should return status code 200 and have About Us in the body of the response"){
-      request.get(base, (err, res, body) => {
+    it("it should return status code 200 and have About Us in the body of the response", (done){
+      request.get("/about", (err, res, body) => {
         expect(res.statusCode).toBe(200);
         expect(body).toContain("About US");
 
