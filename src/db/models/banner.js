@@ -7,12 +7,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       onDelete: "CASCADE",
       references: {
-        model: "Topic",
+        model: "Topics",
         key: "id",
         as: "topicId",
       }
     }
-  },
+  },{});
   Banner.associate = function(models) {
     // associations can be defined here
     Banner.belongsTo(models.Topic, {

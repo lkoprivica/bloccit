@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/lkoprivica/bloccit#readme",
   "devDependencies": {
-    "jasmine": "^3.0.0",
+    "jasmine": "^3.4.0",
     "request": "^2.83.0"
   },
   "dependencies": {
