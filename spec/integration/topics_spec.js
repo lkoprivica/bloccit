@@ -4,6 +4,7 @@ const base = "http://localhost:3000/topics/";
 const sequelize = require("../../src/db/models/index").sequelize;
 const Topic = require("../../src/db/models").Topic;
 
+
 describe("routes : topic", () => {
 
     beforeEach((done) => {
@@ -31,7 +32,6 @@ describe("routes : topic", () => {
 
     it("should return a status code 200 and all topics", (done) => {
 
-//#3
       request.get(base, (err, res, body) => {
         expect(res.statusCode).toBe(200);
         expect(err).toBeNull();
