@@ -10,7 +10,7 @@ describe("routes : topic", () => {
       this.topic;
       sequelize.sync({force: true}).then((res) => {
 
-       Topics.create({
+       Topic.create({
          title: "JS Frameworks",
          description: "There is a lot of them"
        })
