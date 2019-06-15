@@ -6,6 +6,7 @@ module.exports = {
     topicQueries.getAllRules((err, rules) => {
 
         if(err){
+          console.log("ERROR", err);
           res.redirect(500, "static/index");
         } else {
           res.render("rules/index", {rules});

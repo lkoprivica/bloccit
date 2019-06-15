@@ -4,10 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     description: DataTypes.STRING
   }, {});
-   var Rule = sequelize.define('Rule', {
-    title: DataTypes.STRING,
-    description: DataTypes.STRING
-  }, {});
 
   Topic.associate = function(models) {
     // associations can be defined here
@@ -19,6 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey:"topicId",
       as: "rules",
     });
-  return Topic;
   };
+  return Topic;
 };

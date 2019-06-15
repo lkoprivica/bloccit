@@ -1,29 +1,36 @@
 const request = require("request");
 const server = require("../../src/server");
-const base = "http://localhost:3000/topics/";
+const base = "http://localhost:3000/rules/";
 const sequelize = require("../../src/db/models/index").sequelize;
- const Rule = require("../../src/db/models").Rule;
+const Rule = require("../../src/db/models").Rule;
+const Topic = require("../../src/db/models").Topic;
 
 describe("routes : rules", () => {
-  beforeEach((done) => {
+  beforeEach(done => {
+      this.topic;
       this.rule;
-      sequelize.sync({force: true}).then((res) => {
+      sequelize.sync({force: true}).then(res => {
 
-       Rule.create({
+       Topic.create({
          title: "JS Frameworks",
          description: "There are many"
        })
-        .then((rule) => {
-          this.rule = rule;
-          done();
+        .then(topic => {
+          this.topic = topic;
+          return Rule.create({
+            description: "This is a rule",
+            topidId: this.topic.id
+          })
+          .then(rule =>  {
+            this.rule = rule;
+            done();
+          });
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           done();
         });
-
       });
-
     });
 
   describe("GET /rules", () => {
@@ -33,8 +40,9 @@ describe("routes : rules", () => {
          request.get(base, (err, res, body) => {
            expect(res.statusCode).toBe(200);
            expect(err).toBeNull();
+           console.log("BODY", body);
            expect(body).toContain("Rules");
-           expect(body).toContain("JS Frameworks");
+
            done();
          });
        });
