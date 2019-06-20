@@ -5,4 +5,4 @@ const advertisementController = require("../controllers/advertisementController"
 
 router.get("/advertisement", advertisementController.index);
 
-module.ecports = router;
+module.exports = router;
