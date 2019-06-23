@@ -13,7 +13,8 @@ module.exports = {
   new(req, res, next){
        res.render("topics/new");
      },
-     create(req, res, next){
+
+  create(req, res, next){
     let newTopic = {
       title: req.body.title,
       description: req.body.description
@@ -56,7 +57,7 @@ module.exports = {
        }
      });
    },
-   
+
    update(req, res, next){
      topicQueries.updateTopic(req.params.id, req.body, (err, topic) => {
 
