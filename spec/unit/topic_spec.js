@@ -3,6 +3,7 @@ const Topic = require("../../src/db/models").Topic;
 const Post = require("../../src/db/models").Post;
 
 describe("#create()", () => {
+
   it("Should create a Topic object", (done) => {
     const title = "This is the title";
     const body = "This is the body";
@@ -28,13 +29,34 @@ describe("#create()", () => {
 
   describe("#getPosts()", () => {
 
-    it("should return the associated post", (done) => {
+    beforeEach((done) => {
 
-      this.topic.getPosts()
+      this.topic;
+      this.post;
+      sequelize.sync({force: true}).then((res) => {
 
-        .then((associatedPost) => {
-        expect(associatedT.title).toBe("Post One");
+        Post.create({
+          title: "Expeditions to Alpha Centauri",
+          description: "A compilation of reports from recent visits to the star system."
+        })
+        .then((post) => {
+          this.post = post;
+
+          Topic.create({
+            title: "My first visit to Proxima Centauri b",
+            body: "I saw some rocks.",
+
+            postId: this.post.id
+          })
+          .then((topic) => {
+            this.topic = topic;
+            done();
+          });
+        })
+        .catch((err) => {
+          console.log(err);
           done();
+        });
       });
 
     });
