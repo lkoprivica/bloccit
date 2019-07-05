@@ -4,7 +4,12 @@ const Post = require("../../src/db/models").Post;
 
 describe("#create()", () => {
 
-  it("Should create a Topic object", (done) => {
+  beforeEach ((done) => {
+
+    this.topic;
+    this.post;
+    sequelize.sync({force: true}).then((res) => {
+
     const title = "This is the title";
     const body = "This is the body";
     const topicId = this.topic.id;
@@ -25,6 +30,7 @@ describe("#create()", () => {
       done();
     });
   });
+ });
 });
 
   describe("#getPosts()", () => {
