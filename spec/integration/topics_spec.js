@@ -127,7 +127,7 @@ describe("routes : topic", () => {
 
          });
 
-         describe("GET /topics/:id/edit", () => {
+    describe("GET /topics/:id/edit", () => {
 
      it("should render a view with an edit topic form", (done) => {
        request.get(`${base}${this.topic.id}/edit`, (err, res, body) => {
