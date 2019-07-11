@@ -20,7 +20,9 @@
   "devDependencies": {
     "faker": "^4.1.0",
     "jasmine": "^3.4.0",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "sequelize-cli": "^5.5.0"
+
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
