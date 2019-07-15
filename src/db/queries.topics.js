@@ -44,17 +44,28 @@ module.exports = {
         callback(err);
       })
     },
-    deleteTopic(id, callback){
-    return Topic.destroy({
-      where: {id}
-    })
-    .then((topic) => {
-      callback(null, topic);
-    })
-    .catch((err) => {
-      callback(err);
-    })
-  },
+    deleteTopic(req, callback){
+
+     return Topic.findByPk(req.params.id)
+     .then((topic) => {
+
+       const authorized = new Authorizer(req.user, topic).destroy();
+
+       if(authorized) {
+         topic.destroy()
+         .then((res) => {
+           callback(null, topic);
+         });
+
+       } else {
+         req.flash("notice", "You are not authorized to do that.")
+         callback(401);
+       }
+     })
+     .catch((err) => {
+       callback(err);
+     });
+   },
   destroy(req, res, next){
      topicQueries.deleteTopic(req.params.id, (err, topic) => {
        if(err){
@@ -64,22 +75,30 @@ module.exports = {
        }
      });
    },
-   updateTopic(id, updatedTopic, callback){
-     return Topic.findById(id)
+   updateTopic(req, updatedTopic, callback){
+     return Topic.findByPk(req.params.id)
      .then((topic) => {
+
        if(!topic){
          return callback("Topic not found");
        }
 
-       topic.update(updatedTopic, {
-         fields: Object.keys(updatedTopic)
-       })
-       .then(() => {
-         callback(null, topic);
-       })
-       .catch((err) => {
-         callback(err);
-       });
+       const authorized = new Authorizer(req.user, topic).update();
+
+       if(authorized) {
+         topic.update(updatedTopic, {
+           fields: Object.keys(updatedTopic)
+         })
+         .then(() => {
+           callback(null, topic);
+         })
+         .catch((err) => {
+           callback(err);
+         });
+       } else {
+         req.flash("notice", "You are not authorized to do that.");
+          callback("Forbidden");
+       }
      });
    }
 
