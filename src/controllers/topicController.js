@@ -11,11 +11,8 @@ module.exports = {
         }
       })
   },
-//  new(req, res, next){
-  //     res.render("topics/new");
-  //   },
+
  new(req, res, next){
-    // #2
       const authorized = new Authorizer(req.user).new();
         if(authorized) {
           res.render("topics/new");
@@ -25,7 +22,7 @@ module.exports = {
         }
       },
 
-  create(req, res, next){
+ create(req, res, next){
        const authorized = new Authorizer(req.user).create();
 
         if(authorized) {
@@ -42,7 +39,6 @@ module.exports = {
          });
         } else {
 
-   // #3
           req.flash("notice", "You are not authorized to do that.");
           res.redirect("/topics");
         }

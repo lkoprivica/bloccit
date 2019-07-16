@@ -56,6 +56,7 @@ describe("Post", () => {
 
          expect(post.title).toBe("Pros of Cryosleep during the long journey");
          expect(post.body).toBe("1. Not having to answer the 'are we there yet?' question.");
+         expect(post.topicId).toBe(this.topic.id);
          expect(post.userId).toBe(this.user.id);
          done();
 
@@ -124,6 +125,7 @@ describe("Post", () => {
      });
 
    });
+   
    describe("#setUser()", () => {
 
      it("should associate a post and a user together", (done) => {
