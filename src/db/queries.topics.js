@@ -1,11 +1,12 @@
 const Topic = require("./models").Topic;
 const Post = require("./models").Post;
+const Authorizer = require("../policies/topic");
 
 module.exports = {
 
 //#1
   getAllTopics(callback){
-    return Topic.all()
+    return Topic.findAll()
 
 //#2
     .then((topics) => {
@@ -15,10 +16,10 @@ module.exports = {
       callback(err);
     })
   },
-  getTopic(id, callback){
-     return Topic.findById(id, {
 
-//#3
+  getTopic(id, callback){
+     return Topic.findByPk(id, {
+
       include: [{
         model: Post,
         as: "posts"
@@ -44,6 +45,7 @@ module.exports = {
         callback(err);
       })
     },
+
     deleteTopic(req, callback){
 
      return Topic.findByPk(req.params.id)
@@ -57,16 +59,17 @@ module.exports = {
            callback(null, topic);
          });
 
-       } else {
-         req.flash("notice", "You are not authorized to do that.")
-         callback(401);
-       }
-     })
-     .catch((err) => {
-       callback(err);
+        } else {
+          req.flash("notice", "You are not authorized to do that.")
+          callback(401);
+        }
+      })
+      .catch((err) => {
+        callback(err);
      });
    },
-  destroy(req, res, next){
+
+   destroy(req, res, next){
      topicQueries.deleteTopic(req.params.id, (err, topic) => {
        if(err){
          res.redirect(500, `/topics/${topic.id}`)
@@ -75,6 +78,7 @@ module.exports = {
        }
      });
    },
+
    updateTopic(req, updatedTopic, callback){
      return Topic.findByPk(req.params.id)
      .then((topic) => {

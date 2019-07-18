@@ -14,7 +14,7 @@ module.exports = {
    },
 
    getPost(id, callback){
-     return Post.findById(id)
+     return Post.findOne(id)
      .then((post) => {
        callback(null, post);
      })
