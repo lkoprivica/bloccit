@@ -5,7 +5,7 @@ module.exports = class PostPolicy extends ApplicationPolicy {
 
  // #2
   new() {
-    return this._isAdmin();
+    return !!this.user;
   }
 
   create() {
@@ -14,7 +14,7 @@ module.exports = class PostPolicy extends ApplicationPolicy {
 
  // #3
   edit() {
-    return this._isAdmin();
+    return this._isAdmin() || (this.user && this.record.userId == this.user.id);
   }
 
   update() {

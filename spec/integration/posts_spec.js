@@ -10,7 +10,7 @@ const User = require("../../src/db/models").User;
 
 function authorizeUser(role, done) {
   User.create({
-    email: `#{role}@example.com`,
+    email: `${role}@example.com`,
     password: "123456",
     role: role
   })
@@ -235,8 +235,7 @@ describe("GET /topics/:topicId/posts/new", () => {
  // #3: define the member user context
 describe("member user performing CRUD actions for Post", () => {
 
- // #4: Send mock request and authenticate as a member user
-      beforeEach((done) => {  // before each suite in member context
+      beforeEach((done) => {
         authorizeUser("member", done);
       });
 
@@ -323,34 +322,57 @@ describe("GET /topics/:topicId/posts/new", () => {
    describe("POST /topics/:topicId/posts/:id/destroy", () => {
 
      it("should delete the post with the associated ID", (done) => {
+       const options = {
+         url: `${base}/${this.topic.id}/posts/create`,
+         form: {
+           title: "Watching snow melt",
+           body: "Without a doubt my favoriting things to do besides watching paint dry!"
+         }
+       };
+       request.post(options,(err, res, body) => {
+         Post.findAll().then(posts => {
+           const post = posts[posts.length - 1];
+           const postCountBeforeDelete = posts.length;
 
-//#1
-       expect(this.post.id).toBe(1);
+           request.post(`${base}/${this.topic.id}/posts/${post.id}/destroy`, (err, res, body) => {
 
-       request.post(`${base}/${this.topic.id}/posts/${this.post.id}/destroy`, (err, res, body) => {
-
-//#2
-         Post.findByPk(1)
-         .then((post) => {
-           expect(err).toBeNull();
-           expect(post).toBeNull();
-           done();
+             Post.findAll().then((allPosts) => {
+               expect(err).toBeNull();
+               expect(allPosts.length).toBe(postCountBeforeDelete - 1);
+               done();
+             })
+           });
          })
        });
-
-     });
+      })
 
    });
 
    describe("GET /topics/:topicId/posts/:id/edit", () => {
 
      it("should render a view with an edit post form", (done) => {
-       request.get(`${base}/${this.topic.id}/posts/${this.post.id}/edit`, (err, res, body) => {
-         expect(err).toBeNull();
-         expect(body).toContain("Edit Post");
-         expect(body).toContain("Snowball Fighting");
-         done();
-       });
+       const options = {
+         url: `${base}/${this.topic.id}/posts/create`,
+         form: {
+           title: "Watching snow melt",
+           body: "Without a doubt my favoriting things to do besides watching paint dry!"
+         }
+       };
+       request.post(options,(err, res, body) => {
+         Post.findAll().then(posts => {
+           const post = posts[posts.length - 1];
+
+           request.get(`${base}/${this.topic.id}/posts/${post.id}/edit`, (err, res, body) => {
+             expect(err).toBeNull();
+             expect(body).toContain("Edit Post");
+             expect(body).toContain("Without a doubt my favoriting things to do besides watching paint dry!");
+             done();
+           });
+         })
+
+
+       })
+
      });
 
    });
