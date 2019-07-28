@@ -9,6 +9,28 @@ const Post = require("../../src/db/models").Post;
 const User = require("../../src/db/models").User;
 const Comment = require("../../src/db/models").Comment;
 
+function authorizeUser(role, done) {
+  User.create({
+    email: `#{role}@example.com`,
+    password: "123456",
+    role: role
+  })
+  .then((user) => {
+    request.get({
+      url:"http://localhost:3000/auth/fake",
+      form: {
+        role: user.role,
+        userId: user.id,
+        email: user.email
+      }
+    },
+    (err,res,body) => {
+      done();
+    }
+   );
+  });
+}
+
 describe("routes : comments", () => {
 
   beforeEach((done) => {
@@ -73,18 +95,9 @@ describe("routes : comments", () => {
    describe("guest attempting to perform CRUD actions for Comment", () => {
 
 // #2
-     beforeEach((done) => {    // before each suite in this context
-       request.get({           // mock authentication
-         url: "http://localhost:3000/auth/fake",
-         form: {
-           userId: 0 // flag to indicate mock auth to destroy any session
-         }
-       },
-         (err, res, body) => {
-           done();
-         }
-       );
-     });
+    beforeEach((done) => {  // before each suite in admin context
+      authorizeUser("admin", done);
+    });
 
 // #3
      describe("POST /topics/:topicId/posts/:postId/comments/create", () => {
@@ -141,21 +154,10 @@ describe("routes : comments", () => {
 
    describe("signed in user performing CRUD actions for Comment", () => {
 
-     beforeEach((done) => {    // before each suite in this context
-       request.get({           // mock authentication
-         url: "http://localhost:3000/auth/fake",
-         form: {
-           role: "member",     // mock authenticate as member user
-           userId: this.user.id
-         }
-       },
-         (err, res, body) => {
-           done();
-         }
-       );
+     beforeEach((done) => {  // before each suite in admin context
+       authorizeUser("admin", done);
      });
 
-// #2
      describe("POST /topics/:topicId/posts/:postId/comments/create", () => {
 
        it("should create a new comment and redirect", (done) => {
@@ -210,8 +212,63 @@ describe("routes : comments", () => {
        });
 
      });
+     //assignment work
+     describe("POST /topics/:topicId/posts/:postId/comments/:id/destroy", () =>{
 
-   }); 
+       it("should not allow a member delete another members user comment", (done) => {
+         Comment.findAll()
+         .then((comments) => {
+           const commentCountBeforeDelete = comments.length;
+
+           expect(commentCountBeforeDelete).toBe(1);
+
+           request.post(
+            `${base}${this.topic.id}/posts/${this.post.id}/comments/${this.comment.id}/destroy`,
+             (err, res, body) => {
+             //expect(res.statusCode).toBe(302)
+             Comment.findAll()
+             .then((comments) => {
+               expect(comments.length).toBe(commentCountBeforeDelete);
+               done();
+             })
+
+           });
+         });
+
+       });
+     }); //assignment work done
+
+   });
+//more assignment work
+   describe("admin trying to perform CRUD operations for comment", () => {
+     beforeEach((done) => {  // before each suite in admin context
+       authorizeUser("admin", done);
+     });
+
+     describe("POST /topics/:topicId/posts/:postId/comments/:id/destroy", () => {
+       it("should allow admin to delete a users comment", () => {
+         Comment.findAll()
+         .then((comments) => {
+           const commentCountBeforeDelete = comments.length;
+
+           expect(commentCountBeforeDelete).toBe(1);
+
+           request.post(
+            `${base}${this.topic.id}/posts/${this.post.id}/comments/${this.comment.id}/destroy`,
+             (err, res, body) => {
+             expect(res.statusCode).toBe(302);
+             Comment.findAll()
+             .then((comments) => {
+               //expect(err).toBeNull();
+               expect(comments.length).toBe(commentCountBeforeDelete - 1);
+               done();
+             });
+
+           });
+         });
+       });
+     });
+   });
 
 
 });
