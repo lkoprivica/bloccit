@@ -8,7 +8,7 @@ const User = require("../../src/db/models").User;
 
 function authorizeUser(role, done) {
   User.create({
-    email: `#{role}@example.com`,
+    email: `${role}@example.com`,
     password: "123456",
     role: role
   })

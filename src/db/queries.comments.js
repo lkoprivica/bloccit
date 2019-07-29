@@ -20,6 +20,7 @@ module.exports = {
   deleteComment(req, callback){
     return Comment.findByPk(req.params.id)
     .then((comment) => {
+
       const authorized = new Authorizer(req.user, comment).destroy();
 
       if(authorized){
