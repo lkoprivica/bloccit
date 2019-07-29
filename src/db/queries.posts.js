@@ -3,86 +3,76 @@ const Topic = require("./models").Topic;
 const Authorizer = require("../policies/post");
 const Comment = require("./models").Comment;
 const User = require("./models").User;
+const Vote = require("./models").Vote;
 
 module.exports = {
-
-  addPost(newPost, callback){
-     return Post.create(newPost)
-     .then((post) => {
-       callback(null, post);
-     })
-     .catch((err) => {
-       callback(err);
-     })
-   },
-
-   getPost(id, callback){
-     return Post.findByPk(id, {
-        include: [
-          {model: Comment, as: "comments", include: [
-            {model: User }
-          ]}
-        ]
+  addPost(newPost, callback) {
+    return Post.create(newPost)
+      .then(post => {
+        callback(null, post);
       })
-     .then((post) => {
-       callback(null, post);
-     })
-     .catch((err) => {
-       callback(err);
-     })
-   },
+      .catch(err => {
+        callback(err);
+      });
+  },
 
-   deletePost(req, callback){
+  getPost(id, callback) {
+    return Post.findByPk(id, {
+      include: [
+        { model: Comment, as: "comments", include: [{ model: User }] },
+        { model: Vote, as: "votes" }
+      ]
+    })
+      .then(post => {
+        callback(null, post);
+      })
+      .catch(err => {
+        callback(err);
+      });
+  },
 
-     return Post.findByPk(req.params.id)
-     .then((post) => {
+  deletePost(req, callback) {
+    return Post.findByPk(req.params.id)
+      .then(post => {
+        const authorized = new Authorizer(req.user, post).destroy();
 
-       const authorized = new Authorizer(req.user, post).destroy();
+        if (authorized) {
+          post.destroy().then(res => {
+            callback(null, post);
+          });
+        } else {
+          req.flash("notice", "You are not authorized to do that.");
+          callback(401);
+        }
+      })
+      .catch(err => {
+        callback(err);
+      });
+  },
 
-       if(authorized) {
-         post.destroy()
-         .then((res) => {
-           callback(null, post);
-         });
+  updatePost(req, updatedPost, callback) {
+    return Post.findByPk(req.params.id).then(post => {
+      if (!post) {
+        return callback("Post not found");
+      }
 
-       } else {
+      const authorized = new Authorizer(req.user, post).update();
 
-         req.flash("notice", "You are not authorized to do that.")
-         callback(401);
-       }
-     })
-     .catch((err) => {
-       callback(err);
-     });
-   },
-
-   updatePost(req, updatedPost, callback){
-
-     return Post.findByPk(req.params.id)
-     .then((post) => {
-
-       if(!post){
-         return callback("Post not found");
-       }
-
-       const authorized = new Authorizer(req.user, post).update();
-
-       if(authorized) {
-
-         post.update(updatedPost, {
-           fields: Object.keys(updatedPost)
-         })
-         .then(() => {
-           callback(null, post);
-         })
-         .catch((err) => {
-           callback(err);
-         });
-       } else {
-
-         req.flash("notice", "You are not authorized to do that.");
-         callback("Forbidden");
-       }
-     });
-   }
-}
+      if (authorized) {
+        post
+          .update(updatedPost, {
+            fields: Object.keys(updatedPost)
+          })
+          .then(() => {
+            callback(null, post);
+          })
+          .catch(err => {
+            callback(err);
+          });
+      } else {
+        req.flash("notice", "You are not authorized to do that.");
+        callback("Forbidden");
+      }
+    });
+  }
+};
