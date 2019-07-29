@@ -32,7 +32,7 @@ module.exports = {
       if(err){
         res.redirect(err, req.headers.referer);
       } else {
-        res.redirect(req.headers.referer);
+        res.redirect(`/topics/${req.params.topicId}/posts/${req.params.postId}/`);
       }
     });
   }
