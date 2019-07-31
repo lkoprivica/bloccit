@@ -21,7 +21,7 @@
     "faker": "^4.1.0",
     "jasmine": "^3.4.0",
     "request": "^2.83.0",
-    "sequelize": "^6.0.0",
+    "sequelize": "^5.12.2",
     "sequelize-cli": "^5.5.0"
   },
   "dependencies": {
@@ -37,7 +37,6 @@
     "passport-local": "^1.0.0",
     "pg": "^7.4.1",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^6.0.0",
     "sequelize-cli": "^5.5.0"
   }
 }
