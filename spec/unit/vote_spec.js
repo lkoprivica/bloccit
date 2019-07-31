@@ -233,65 +233,65 @@ describe("Vote", () => {
         });
     });
   });
-
-  //assignment work getPoints
-  describe("#getPoints()", () => {
-    it("should return how many votes a post has", done => {
-      Vote.create({
-        value: 1,
-        postId: this.post.id,
-        userId: this.user.id
+//assignment work getPoints
+describe("#getPoints()", () => {
+  it("should return how many votes a post has", done => {
+    Vote.create({
+      value: 1,
+      postId: this.post.id,
+      userId: this.user.id
+    })
+    .then((vote)=> {
+      this.post.votes = [vote];
+      this.vote = this.post.votes[0];
+      expect(this.post.getPoints()).toBe(1);
+        done();
       })
-      .then((vote)=> {
-        this.post.votes = [vote];
-        this.vote = this.post.votes[0];
-        expect(this.post.getPoints()).toBe(1);
-          done();
-        })
-        .catch(err => {
-          console.log(err);
-          done();
-        });
-    });
-  }); //end assignment
-
-  describe("#hasUpvoteFor()", () => {
-    it("should return true if user has an upvote for this post", done => {
-      Vote.create({
-        value: 1,
-        postId: this.post.id,
-        userId: this.user.id
-      })
-        .then(vote => {
-            //this.post.votes = vote;
-          const hasUpvote = this.post.hasUpvoteFor(vote.userId);
-          expect(hasUpvote).toBe(true);
-          done()
-        })
-        .catch(err => {
-          console.log(err);
-          done();
-        });
-    });
+      .catch(err => {
+        console.log(err);
+        done();
+      });
   });
+}); //end assignment
 
-  describe("#hasDownvoteFor()", () => {
-    it("should return true if user has a downvote for this post", done => {
-      Vote.create({
-        value: -1,
-        postId: this.post.id,
-        userId: this.user.id
-      })
-        .then(vote => {
+describe("#hasUpvoteFor()", () => {
+  it("should return true if user has an upvote for this post", done => {
+    Vote.create({
+      value: 1,
+      postId: this.post.id,
+      userId: this.user.id
+    })
+      .then(vote => {
           //this.post.votes = vote;
-          const hasDownvote = this.post.hasDownvoteFor(vote.userId);
-          expect(hasDownvote).toBe(true);
-          done();
-        })
-        .catch(err => {
-          console.log(err);
-          done();
-        });
-    });
+        const hasUpvote = this.post.hasUpvoteFor(vote.userId);
+        expect(hasUpvote).toBe(true);
+        done()
+      })
+      .catch(err => {
+        console.log(err);
+        done();
+      });
   });
+});
+
+describe("#hasDownvoteFor()", () => {
+  it("should return true if user has a downvote for this post", done => {
+    Vote.create({
+      value: -1,
+      postId: this.post.id,
+      userId: this.user.id
+    })
+      .then(vote => {
+        //this.post.votes = vote;
+        const hasDownvote = this.post.hasDownvoteFor(vote.userId);
+        expect(hasDownvote).toBe(true);
+        done();
+      })
+      .catch(err => {
+        console.log(err);
+        done();
+      });
+  });
+});
+  
 });
