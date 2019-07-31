@@ -242,10 +242,10 @@ describe("Vote", () => {
         postId: this.post.id,
         userId: this.user.id
       })
-        .then(vote => {
-          //this.post.vote = vote.length;
-          const voteCount = this.post.getPoints(this.post.vote);
-          expect(voteCount).toBe(1);
+      .then((vote)=> {
+        this.post.votes = [vote];
+        this.vote = this.post.votes[0];
+        expect(this.post.getPoints()).toBe(1);
           done();
         })
         .catch(err => {
@@ -263,10 +263,10 @@ describe("Vote", () => {
         userId: this.user.id
       })
         .then(vote => {
-          this.post.votes = vote;
+            //this.post.votes = vote;
           const hasUpvote = this.post.hasUpvoteFor(vote.userId);
           expect(hasUpvote).toBe(true);
-          done();
+          done()
         })
         .catch(err => {
           console.log(err);
@@ -283,7 +283,7 @@ describe("Vote", () => {
         userId: this.user.id
       })
         .then(vote => {
-          this.post.votes = vote;
+          //this.post.votes = vote;
           const hasDownvote = this.post.hasDownvoteFor(vote.userId);
           expect(hasDownvote).toBe(true);
           done();
