@@ -55,6 +55,14 @@ module.exports = (sequelize, DataTypes) => {
         postId: post.id
       });
     });
+    
+    Post.afterCreate((post, callback) => {
+      return models.Vote.create({
+        value: 1,
+        userId: post.userId,
+        postId: post.id
+      });
+    });
   };
 
   Post.prototype.getPoints = function() {
@@ -69,8 +77,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Post.prototype.hasUpvoteFor = function(userId) {
-    
-    if (!this.votes || (this.votes && this.votes.length === 0))return true;
+    if (!this.votes || (this.votes && this.votes.length === 0)) return true;
     console.log("VOTES", this.votes);
     const foundUpvote = this.votes.filter(vote => {
       return vote.value === 1 && vote.userId == userId;
@@ -79,16 +86,18 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Post.prototype.hasDownvoteFor = function(userId) {
-    if (!this.votes || (this.votes && this.votes.length === 0))return true;
+    if (!this.votes || (this.votes && this.votes.length === 0)) return true;
     const foundDownvote = this.votes.filter(vote => {
       return vote.value === -1 && vote.userId == userId;
     });
     return foundDownvote.length === 1;
   };
 
-  Post.prototype.getFavoriteFor = function(userId){
-    return this.favorites.find((favorite) => { return favorite.userId == userId });
+  Post.prototype.getFavoriteFor = function(userId) {
+    return this.favorites.find(favorite => {
+      return favorite.userId == userId;
+    });
   };
-  
+
   return Post;
 };
