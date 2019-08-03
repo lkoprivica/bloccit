@@ -34,62 +34,6 @@ describe("routes : users", () => {
 
   });
 
-  describe("GET /users/:id", () => {
-
-    beforeEach((done) => {
-      this.user;
-      this.post;
-      this.comment;
-
-      User.create({
-        email: "starman@tesla.com",
-        password: "Trekkie4lyfe"
-      })
-      .then((res) => {
-        this.user = res;
-
-        Topic.create({
-          title: "Winter Games",
-          description: "Post your Winter Games stories.",
-          posts: [{
-            title: "Snowball Fighting",
-            body: "So much snow!",
-            userId: this.user.id
-          }]
-        }, {
-          include: {
-            model: Post,
-            as: "posts"
-          }
-        })
-        .then((res) => {
-          this.post = res.posts[0];
-
-          Comment.create({
-            body: "This comment is alright.",
-            postId: this.post.id,
-            userId: this.user.id
-          })
-          .then((res) => {
-            this.comment = res;
-            done();
-          })
-        })
-      })
-
-    });
-
-    it("should present a list of comments and posts a user has created", (done) => {
-
-      request.get(`${base}${this.user.id}`, (err, res, body) => {
-        expect(body).toContain("Snowball Fighting");
-        expect(body).toContain("This comment is alright.")
-        done();
-      });
-
-    });
-  });
-
   describe("POST /users", () => {
 
     it("should create a new user with valid values and redirect", (done) => {
@@ -148,3 +92,4 @@ describe("routes : users", () => {
   });
 
 });
+

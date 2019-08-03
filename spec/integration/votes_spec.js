@@ -92,7 +92,8 @@ describe("routes : votes", () => {
               console.log(err);
               done();
             });
-        });
+          }
+        );
       });
     });
   });
