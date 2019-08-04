@@ -21,6 +21,17 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "userId",
       onDelete: "CASCADE"
     });
+//assigment for checkpoint public profiles
+    Favorite.addScope("favoritedPosts", (userId) => {
+      return {
+        include: [{
+          model: models.Post
+        }],
+        where: { userId: userId },
+        order: [["createdAt", "DESC"]]
+      }
+    });
   };
+  //};
   return Favorite;
 };

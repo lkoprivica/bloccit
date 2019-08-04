@@ -5,7 +5,6 @@ const Comment = require("./models").Comment;
 const bcrypt = require("bcryptjs");
 
 module.exports = {
-
   createUser(newUser, callback) {
     const salt = bcrypt.genSaltSync();
     const hashedPassword = bcrypt.hashSync(newUser.password, salt);
@@ -33,11 +32,22 @@ module.exports = {
           .findAll()
           .then(posts => {
             result["posts"] = posts;
+
             Comment.scope({ method: ["lastFiveFor", id] })
               .findAll()
               .then(comments => {
                 result["comments"] = comments;
-                callback(null, result);
+
+                Favorite.scope({ method: ["favoritedPosts", id] })
+                  .findAll()
+                  .then(favorites => {
+                    result["favorites"] = favorites;
+
+                    callback(null, result);
+                  })
+                  .catch(err => {
+                    callback(err);
+                  });
               })
               .catch(err => {
                 callback(err);
